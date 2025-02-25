@@ -54,6 +54,7 @@ int main() {
     cout << "Enter your choice (1 or 2): ";
     cin.get(response);
     cout << endl;
+    cin.ignore();
 
     //for single mode
     if (response == '1') {
@@ -106,7 +107,33 @@ int main() {
     }
 
     //for multiplayer mode
-    if (response == 2) {
+    if (response == '2') {
+//        Request player 1 details and choice
+        cout << "Please enter your name player 1: ";
+        getline(cin,play1Name);
+
+        //Player1 makes choice
+        selection1 = getSelection();
+        cin.ignore();
+        cout << endl;
+
+//        Request player 2 details and choice
+        cout << "Please enter your name player 2: ";
+        getline(cin, play2Name);
+
+        //Player2 makes choice
+        selection2 = getSelection();
+        cin.ignore();
+        cout << endl;
+
+        play1 = objectSelect(selection1);
+        play2 = objectSelect(selection2);
+        cout << endl;
+
+        //Make Decision
+        gameResult(play1, play2, play1Name, play2Name, gamecount, win1count, win2count);
+
+        // Scoreboard
 
     }
 
