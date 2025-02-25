@@ -1,13 +1,12 @@
 //****************************************************************************
 // Program Functionality and Purpose
-//This is a program of the Rock Paper Scissor Game.
-//Project started on 17/02/2025
+// ROCK PAPER SCISSOR GAME.
+// Recheck the computer selection system.
 //****************************************************************************
 
-// header file
 #include <iostream>
-#include <string>
-
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -16,172 +15,211 @@ enum class objectType {
 };
 
 //Functions
-void displayRules();
-bool validateSelection(char selection);
-objectType initializeObject (char selection);
-string convertEnum(objectType object);
-void gameResult(objectType play1, objectType play2, int win1, int win2 );
-void gameResult(objectType play1, objectType play2, string& player1Name, string& player2Name);
+void Welcome();
 
+char getSelection();
 
-//Program Execution Starts Here
+bool validateUserInput(char userInput);
+
+objectType objectSelect(char selection);
+
+string convertEnum(objectType play);
+
+void gameResult(objectType play1, objectType play2, string play1Name, string play2Name, int &gamecount, int &win1count,
+                int &win2count);
+
+void displayChoice(string& play1Name, string& play2Name,objectType play1,objectType play2);
+
+//program starts
 int main() {
 // Declare variables
-    string player1Name;
-    string player2Name;
-    char ans;
+    static int gamecount, win1count, win2count;
+    static char selection1;
+    static char selection2;
+    char response;
+    static string play1Name, play2Name;
     objectType play1, play2;
 
-    char selection1;
-    char selection2;
+    srand(time(0));
+
+    int randomNumber = (rand() % 3) + 1;
 
 
-    //Display a brief info and rules about the game.
-    displayRules();
-
-    //Prompt the user to know if the user would like to play the game.
-    cout << "Would you like to play RPS, Yes(y/Y) or No(n,N) : ";
-    cin >> ans;
+//display welcome message
+    Welcome();
+//choose the game mode
+    cout << "Choose a Game Mode: \n";
+    cout << "1. Single Player (You vs Computer) \n";
+    cout << "2. Multiplayer (Player 1 vs Player 2)\n";
+    cout << "Enter your choice (1 or 2): ";
+    cin.get(response);
     cout << endl;
-    cin.ignore();
 
-    //statements runs when ans = y
-    if (ans == 'Y' || ans == 'y') {
-//        requesting and collecting player1 details
-        cout << "Player 1 Please enter your name: ";
-        getline(cin,player1Name);
+    //for single mode
+    if (response == '1') {
+        //Acquiring user data
+        cout << "What is your name player: ";
+        cin >> play1Name;
+        cin.clear();
+        cin.ignore();
         cout << endl;
 
-//        requesting and collecting player2 details
-        cout << "Player 2 Please enter your name: ";
-        getline(cin,player2Name);
+        //computer
+        play2Name = "Computer";
+        
+        //get selection
+        selection1 = getSelection();
+
+        //validate selection
+        validateUserInput(selection1);
+
+        //Computer make random choice.
+
+        switch (randomNumber) {
+            case 1:
+                selection2 = 'R';
+                break;
+            case 2:
+                selection1 = 'S';
+                break;
+            case 3:
+                selection2 = 'P';
+                break;
+
+            default:
+                cout << "error at line 74" << endl;
+        }
+
+        //Processing the Game Result
+        play1 = objectSelect(selection1);
+        play2 = objectSelect(selection2);
         cout << endl;
 
-//        Requesting players to make choice.
-//        Player 1
-        cout << player1Name << ", please make you choice, R:rock , P:paper, S:scissors" << endl;
-        cout << "Choice: ";
-        cin >> selection1;
+        //Make Decision
+        gameResult(play1, play2, play1Name, play2Name, gamecount, win1count, win2count);
 
-//        Player 2
-        cout << player2Name << ", please make you choice, R:rock , P:paper, S:scissors" << endl;
-        cout << "Choice: ";
-        cin >> selection2;
+        // Scoreboard
 
-//        Call a function to validate the players answer if answers pass validation, proceed to process result
-        if (validateSelection(selection1) && validateSelection(selection2) ) {
-
-            //initialize each players choice with the respect object.
-            play1 = initializeObject(selection1);
-            play2 = initializeObject(selection2); // each players choice initialize
-
-            // if the game is a tie
-            if ( play1 == play2 ) {
-                cout << "Both players chose " << convertEnum(play1) << " the game is a tie! " << endl;
-            }
-
-            if ( play1 != play2 ) {
-//        Call the gameResult function to process the result.
-                gameResult(play1, play2, player2Name, player2Name);
-
-            }
-
-        }
-        else
-        {
-            cout << "Players input invalid" << endl;
-        }
 
 
 
     }
 
-    //statements runs when ans = n
-    if (ans == 'n' || ans == 'N') {
-        cout << "Adious" << endl;
+    //for multiplayer mode
+    if (response == 2) {
+
     }
 
-
+    //invalide output.
 
 
     return 0;
 }
 
-void displayRules() {
-    cout << "Rock Paper Scissors also known as RPS, is a simple hand gesture game" << endl;
-    cout << "It is typically played between two people" << endl;
+void Welcome() {
+    cout << "Welcome to the Ultimate Rock, Paper, Scissors Game! " << endl;
+    cout << "---------------------------------------------------" << endl;
+    cout << " Rules of the Game:" << endl;
+    cout << "1. Rock  beats Scissors " << endl;
+    cout << "2. Paper beats Rock " << endl;
+    cout << "3. Scissors  beats Paper " << endl;
+    cout << "4. If both players choose the same, it's a tie! " << endl;
+    cout << "---------------------------------------------------" << endl;
+    cout << " Get ready to play and see who wins! " << endl;
     cout << endl;
-    cout << "Rules: " <<endl;
-    cout << "1. Rock beats Scissors ( by crushing it)" << endl;
-    cout << "2. Scissors beats paper ( by cutting it" << endl;
-    cout << "3. Paper beats rock (b covering it)" << endl;
-    cout << endl;
-} // displays the welcome message as well as the rulse of the game.
-
-bool validateSelection(char selection) {
-    switch (selection) {
-        case 'S':
-        case 's':
-        case 'P':
-        case 'p':
-        case 'R':
-        case 'r':
-            return true;
-
-        default: return false;
-    }
-}  //validates the player's answer
-
-objectType initializeObject (char selection) {
-    objectType object;
-
-    switch (selection) {
-        case 'S':
-            object = objectType::SCISSORS;
-        case 's':
-            object = objectType::SCISSORS;
-            break;
-
-        case 'P':
-            object = objectType::PAPER;
-        case 'p':
-            object = objectType::PAPER;
-            break;
-
-        case 'R':
-            object = objectType::ROCK;
-        case 'r':
-            object = objectType::ROCK;
-            break;
-
-        default: cout << "object not found" << endl;
-    }
-
-    return object;
-} //set objects passed on the user's choice.
-
-string convertEnum(objectType object) {
-    switch (object) {
-        case objectType::ROCK:
-            return "Rock";
-
-        case objectType::PAPER:
-            return "Paper";
-
-        case objectType::SCISSORS:
-            return "Scissors";
-
-        default: cout << "Error line 165";
-    }
-
-}  //convert the enumObject to string for output.
-
-void gameResult(objectType play1, objectType play2, string& player1Name, string& player2Name) {
-
-    if(((play1 == objectType:: ROCK )&& (play2 == objectType:: SCISSORS))||((play1 == objectType:: PAPER) && (play2 == objectType::ROCK))||((play1 == objectType:: SCISSORS) && (play2 == objectType::PAPER))) {
-        cout << player1Name << "wins" << endl;
-    }
-    else
-        cout << player2Name << " wins" << endl;
 }
 
+char getSelection() {
+    //get selection
+    char userInput;
+    cout << "Choose your move: \n";
+    cout << "R - Rock \n";
+    cout << "P - Paper \n";
+    cout << "S - Scissors ✂\n";
+    cout << "Enter your choice (R, P, S): ";
+    cin >> userInput;
+    cin.ignore();
+
+    return userInput;
+}
+
+bool validateUserInput(char userInput) {
+    switch (userInput) {
+        case 'S':
+        case 's':
+        case 'R':
+        case 'r':
+        case 'P':
+        case 'p':
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+objectType objectSelect(char selection) {
+    objectType object;
+    switch (selection) {
+        case 'R':
+        case 'r':
+            object = objectType::ROCK;
+            break;
+        case 'S':
+        case 's':
+            object = objectType::SCISSORS;
+            break;
+        case 'P':
+        case 'p':
+            object = objectType::PAPER;
+            break;
+    }
+    return object;
+}
+
+string convertEnum(objectType play) {
+    string converted;
+
+    if (play == objectType::PAPER) {
+        converted = "Paper";
+    }
+    if (play == objectType::SCISSORS) {
+        converted = "scissors";
+    }
+    if (play == objectType::ROCK) {
+        converted = "rock";
+    }
+    return converted;
+}
+
+void gameResult(objectType play1, objectType play2, string play1Name, string play2Name, int &gamecount, int &win1count,
+                int &win2count) {
+    if (play1 == play2) {
+        cout << "The game is a tie, both players choose: " << convertEnum(play1) << endl;
+        gamecount++;
+    }
+
+    if (play1 == objectType::PAPER && play2 == objectType::SCISSORS ||
+        play1 == objectType::PAPER && play2 == objectType::ROCK ||
+        play1 == objectType::SCISSORS && play2 == objectType::PAPER) {
+        cout << play1Name << " wins the game!" << endl;
+        win1count++;
+
+        displayChoice(play1Name, play2Name, play1, play2);
+
+    } else
+        cout << play2Name << " wins the game!" << endl;
+    win2count++;
+}
+
+void scoreBoard(int &gamecount, string &play1Name, string &play2Name, int &win1count, int &win2count) {
+    cout << " -----------------------Score Board------------------------" << endl;
+    cout << "The number of games played : " << gamecount;
+    cout << play1Name << win1count << endl;
+    cout << play2Name << win1count << endl;
+    cout << "Thank you for playing the game" << endl;
+}
+
+void displayChoice(string& play1Name, string& play2Name,objectType play1,objectType play2) {
+    cout << play1Name << " choses: " << convertEnum(play1) << " and " << play2Name << " choses: " << convertEnum(play2);
+}
